@@ -52,6 +52,7 @@ import coil.compose.rememberImagePainter
 import com.example.recipeapppaparaproject.R
 import com.example.recipeapppaparaproject.data.local.entity.FavoriRecipes
 import com.example.recipeapppaparaproject.nav.Screens
+import com.example.recipeapppaparaproject.presentation.bottomBar.BottomBarScreen
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -113,7 +114,7 @@ fun FavoriteRecipeScreen(
                                 recipe = recipe,
                                 onRecipeClick = {
                                     recipe.recipeid.let {
-                                        navController.navigate(Screens.RECIPE_DETAIL + "/$it")
+                                        navController.navigate(BottomBarScreen.MealDetails.passMealId(it))
                                     }
                                 },
                                 onRecipeDismissed = {
