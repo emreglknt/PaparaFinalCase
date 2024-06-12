@@ -11,6 +11,4 @@ data class FavoriRecipes(
     var image: String,
     var imageType: String,
     var title: String,
-    val userId: String
-
 )

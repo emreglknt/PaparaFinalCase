@@ -1,13 +1,11 @@
 package com.example.recipeapppaparaproject.presentation.mealPLanScreen
 
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Card
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -25,21 +23,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.recipeapppaparaproject.R
-
-import androidx.compose.material.Text
 import com.example.recipeapppaparaproject.data.model.DailyMealResponse.Meal
-
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.Card
-import androidx.compose.material.Text
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.graphics.drawscope.Stroke
-
 import com.example.recipeapppaparaproject.data.model.DailyMealResponse.Nutrients
-
-
 
 @Composable
 fun MealPlanScreen(navController: NavController) {
@@ -125,7 +110,7 @@ fun CardCompose(mealPlanViewModel: MealPlanViewModel = hiltViewModel()) {
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             // State-based UI updates
             when (mealPlanState) {
@@ -134,17 +119,8 @@ fun CardCompose(mealPlanViewModel: MealPlanViewModel = hiltViewModel()) {
                 }
                 is DailyMealMealState.Success -> {
                     val meals = (mealPlanState as DailyMealMealState.Success).recipes.meals
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(meals.size) { index ->
-                            MealCard(meal = meals[index])
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
+                    MealListCard(meals)
+                    Spacer(modifier = Modifier.height(5.dp))
 
                     val nutrients = (mealPlanState as DailyMealMealState.Success).recipes.nutrients
                     NutrientCard(nutrients = nutrients)
@@ -155,6 +131,39 @@ fun CardCompose(mealPlanViewModel: MealPlanViewModel = hiltViewModel()) {
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
                 }
+
+                else -> {}
+            }
+        }
+    }
+}
+
+@Composable
+fun MealListCard(meals: List<Meal>) {
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp),
+        elevation = CardDefaults.cardElevation(8.dp)
+    ) {
+        Column(modifier = Modifier.padding(10.dp)) {
+            Text(
+                text = "Meals",
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+            Spacer(modifier = Modifier.height(3.dp))
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 5.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(meals.size) { index ->
+                    MealCard(meal = meals[index])
+                }
             }
         }
     }
@@ -164,10 +173,10 @@ fun CardCompose(mealPlanViewModel: MealPlanViewModel = hiltViewModel()) {
 fun MealCard(meal: Meal) {
     Card(
         shape = RoundedCornerShape(8.dp),
-        elevation = 4.dp,
+        elevation = CardDefaults.cardElevation(4.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(40.dp)
+            .height(60.dp)
             .clickable { }
     ) {
         Row(
@@ -178,13 +187,12 @@ fun MealCard(meal: Meal) {
         ) {
             Text(
                 text = meal.title,
-                style = TextStyle(fontSize = 16.sp),
+                style = TextStyle(fontSize = 15.sp),
                 modifier = Modifier.weight(1f)
             )
         }
     }
 }
-
 
 @Composable
 fun NutrientCard(nutrients: Nutrients) {
@@ -192,23 +200,23 @@ fun NutrientCard(nutrients: Nutrients) {
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
-        elevation = 8.dp
+            .padding(10.dp),
+        elevation = CardDefaults.cardElevation(8.dp)
     ) {
         Column(
             modifier = Modifier
                 .background(Color.White)
-                .padding(16.dp),
+                .padding(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = "Nutritional Information",
-                fontSize = 20.sp,
+                fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(7.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -231,7 +239,7 @@ fun NutrientBar(title: String, value: Double, color: Color) {
     ) {
         Box(
             modifier = Modifier
-                .height(100.dp)
+                .height(80.dp)
                 .width(24.dp)
                 .background(color.copy(alpha = 0.2f), shape = RoundedCornerShape(4.dp))
                 .padding(top = 4.dp)

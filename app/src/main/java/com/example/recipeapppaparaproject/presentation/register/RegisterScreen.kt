@@ -26,14 +26,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-
 import com.airbnb.lottie.compose.*
-
 import com.example.recipeapppaparaproject.R
 import com.example.recipeapppaparaproject.presentation.AuthViewModel.AuthViewModel
 import java.util.regex.Pattern
-
-
 
 @Composable
 fun GradientButton(
@@ -52,19 +48,25 @@ fun GradientButton(
 
     Button(
         onClick = onClick,
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(30.dp),
         colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
         modifier = modifier
-            .background(brush = backgroundColor, shape = RoundedCornerShape(22.dp)),
-        enabled = isEnabled
+            .fillMaxWidth() // Make the button full width
+            .padding(horizontal = 32.dp) // Add horizontal padding
+            .background(brush = backgroundColor, shape = RoundedCornerShape(30.dp))
+            .height(50.dp),
+        enabled = isEnabled,
+        contentPadding = PaddingValues()
     ) {
         Text(
             text = text,
             color = Color.White,
-            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold),
+            modifier = Modifier.padding(horizontal = 32.dp)
         )
     }
 }
+
 
 @Composable
 fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = hiltViewModel()) {
@@ -77,7 +79,6 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = hilt
     val gradient = Brush.horizontalGradient(listOf(Color(0xFFFF8C61), Color(0xFF5C374C)))
     val registerResult by viewModel.registerResult.collectAsState(initial = null)
     val context = LocalContext.current
-
 
     val emailPattern = Pattern.compile(
         "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
@@ -117,8 +118,7 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = hilt
             Image(
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = null,
-                contentScale = ContentScale.FillBounds
-                ,
+                contentScale = ContentScale.FillBounds,
                 modifier = Modifier
                     .width(250.dp)
                     .height(250.dp)
@@ -157,7 +157,6 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = hilt
                     focusedBorderColor = Color(0xFFFF8C61),
                     unfocusedBorderColor = Color(0xFF985277),
                     cursorColor = Color(0xFFFF8C61)
-
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -250,12 +249,12 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = hilt
                     passwordError = !validatePassword(password.text)
                     passwordMatchError = password.text != confirmPassword.text
 
-
                     if (!emailError && !passwordError && !passwordMatchError) {
                         viewModel.signup(email.text, password.text)
                     }
                 }
             )
+
             LaunchedEffect(registerResult) {
                 registerResult?.let { user ->
                     if (user != null) {
@@ -279,7 +278,6 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = hilt
                     style = MaterialTheme.typography.body2,
                     color = Color(0xFFFF8C61),
                     modifier = Modifier.clickable {
-                        // login sayfasina yonlendirme
                         navController.navigate("login_screen")
                     }
                 )

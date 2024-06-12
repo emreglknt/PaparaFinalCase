@@ -1,20 +1,19 @@
 package com.example.recipeapppaparaproject.presentation.bottomBar
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -22,6 +21,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+
 @Composable
 fun BottomNav() {
     val navController = rememberNavController()
@@ -51,8 +51,14 @@ fun BottomBar(navController: NavHostController) {
     Row(
         modifier = Modifier
             .padding(start = 10.dp, end = 10.dp, top = 8.dp, bottom = 8.dp)
-            .background(Color.Transparent)
-            .fillMaxWidth(),
+            .background(
+                brush = Brush.horizontalGradient(
+                    colors = listOf(Color(0xFFFF8C61), Color(0xFF5C374C)),
+                )
+            ) // Gradient Color
+            .fillMaxWidth()
+            .height(56.dp) // Height for bottom navigation bar
+            .clip(CircleShape),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -62,11 +68,10 @@ fun BottomBar(navController: NavHostController) {
                 currentDestination = currentDestination,
                 navController = navController
             )
-
         }
     }
-
 }
+
 @Composable
 fun AddItem(
     screen: BottomBarScreen,
@@ -76,10 +81,10 @@ fun AddItem(
     val selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
 
     val background =
-        if (selected) Color.Blue else Color.Transparent
+        if (selected) Color(0xB5CEC5E0) else Color.Transparent
 
     val contentColor =
-        if (selected) Color.White else Color.Black
+        if (selected) Color.White else Color.LightGray
 
     Box(
         modifier = Modifier
@@ -88,32 +93,29 @@ fun AddItem(
             .background(background)
             .clickable(onClick = {
                 navController.navigate(screen.route) {
-                    popUpTo(navController.graph.findStartDestination().id)
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
                     launchSingleTop = true
+                    restoreState = true
                 }
             })
     ) {
         Row(
             modifier = Modifier
-                .padding(start = 10.dp, end = 10.dp, top = 8.dp, bottom = 8.dp),
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-//            Icon(
-//                painter = painterResource(id = if (selected) screen.icon_focused else screen.icon),
-//                contentDescription = "icon",
-//                tint = contentColor
-//            )
-            AnimatedVisibility(visible = selected) {
-                Text(
-                    text = screen.title,
-                    color = contentColor
-                )
-            }
+            Icon(
+                painter = painterResource(id = screen.icon),
+                contentDescription = "icon",
+                tint = contentColor
+            )
+            Text(
+                text = screen.title,
+                color = contentColor
+            )
         }
     }
 }
-
-
-
-

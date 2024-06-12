@@ -27,8 +27,7 @@ import com.google.firebase.auth.FirebaseAuth
 fun BottomNavGraph(
     navController: NavHostController
 ) {
-    val user = FirebaseAuth.getInstance().currentUser
-    val userId = user?.uid ?: ""
+
 
     NavHost(
         navController = navController,
@@ -39,9 +38,9 @@ fun BottomNavGraph(
                 HomeScreen(navController = navController)
             }
         }
-        composable(route = BottomBarScreen.Favourite.route + "/{userId}") {
+        composable(route = BottomBarScreen.Favourite.route) {
             Box(modifier = Modifier.padding(bottom = 56.dp)) {
-                FavoriteRecipeScreen(navController = navController, userId = userId)
+                FavoriteRecipeScreen(navController = navController)
             }
         }
 
@@ -52,13 +51,8 @@ fun BottomNavGraph(
             })
         ) { backStackEntry ->
             val mealId = backStackEntry.arguments?.getInt("mealId") ?: 0
-            // Save the mealId to SavedStateHandle
-            val viewModel: RecipeDetailViewModel = hiltViewModel()
-            LaunchedEffect(mealId) {
-                viewModel.savedStateHandle["recipeId"] = mealId
-            }
             Box(modifier = Modifier.padding(bottom = 56.dp)) {
-                RecipeDetailScreen(onBackMealsScreen = { navController.popBackStack() })
+                RecipeDetailScreen(recipeId= mealId, onBackMealsScreen = { navController.popBackStack() })
             }
         }
 

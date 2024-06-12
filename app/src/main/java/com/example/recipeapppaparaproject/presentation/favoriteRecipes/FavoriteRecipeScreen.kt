@@ -60,13 +60,11 @@ import com.example.recipeapppaparaproject.nav.Screens
 fun FavoriteRecipeScreen(
     navController: NavController,
     favViewModel: FavoriteRecipesViewModel = hiltViewModel(),
-    userId: String
-
 ) {
 
     val favoriteRecipes by favViewModel.favoriteRecipes.observeAsState(emptyList())
-    LaunchedEffect(userId) {
-        favViewModel.getFavoriteRecipes(userId)
+    LaunchedEffect(Unit) {
+        favViewModel.getFavoriteRecipes()
     }
 
     Scaffold(
@@ -121,7 +119,6 @@ fun FavoriteRecipeScreen(
                                 onRecipeDismissed = {
                                     favViewModel.removeFavoriteRecipe(
                                         it.recipeid.toString(),
-                                        userId
                                     )
                                 }
                             )

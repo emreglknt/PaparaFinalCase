@@ -20,33 +20,33 @@ class FavoriteRecipesViewModel @Inject constructor(
     val favoriteRecipes: LiveData<List<FavoriRecipes>> = _favoriteRecipes
 
 
-    fun getFavoriteRecipes(userId: String) {
+    fun getFavoriteRecipes() {
         viewModelScope.launch {
-            repository.getFavoriteRecipes(userId).collect { recipes ->
+            repository.getFavoriteRecipes().collect { recipes ->
                 _favoriteRecipes.value = recipes
             }
         }
     }
 
-    fun addFavoriteRecipe(recipe: RecipeDetailResponse, userId: String) {
+    fun addFavoriteRecipe(recipe: RecipeDetailResponse) {
         viewModelScope.launch {
             val favoriRecipe = FavoriRecipes(
                 recipeid = recipe.id,
                 image = recipe.image,
                 imageType = recipe.imageType,
                 title = recipe.title,
-                userId = userId
+
             )
             repository.insertFavoriteRecipes(favoriRecipe)
-            getFavoriteRecipes(userId) // Update favorite recipes after adding
+            getFavoriteRecipes() // Update favorite recipes after adding
 
         }
     }
 
-    fun removeFavoriteRecipe(recipeId: String,userId: String) {
+    fun removeFavoriteRecipe(recipeId: String) {
         viewModelScope.launch {
             repository.deleteFavoriteRecipeById(recipeId)
-            getFavoriteRecipes(userId) // Update favorite recipes after adding
+            getFavoriteRecipes() // Update favorite recipes after adding
         }
     }
 

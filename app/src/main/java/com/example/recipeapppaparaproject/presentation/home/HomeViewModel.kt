@@ -60,8 +60,7 @@ class HomeViewModel @Inject constructor(
                 }
             } else {
                 // Fetch local favorite recipes if offline
-                repository.getFavoriteRecipes("user_id").collect { result ->
-                    // Map local recipes to Result type
+                repository.getFavoriteRecipes().collect { result ->
                     val mappedResults = result.map { it.toRecipeResult() }
                     val localRecipes = RecipeResponse(
                         number = mappedResults.size,
@@ -104,7 +103,7 @@ class HomeViewModel @Inject constructor(
 
 }
 
-// Extension function to convert FavoriRecipes to RecipeResult (or modify as needed)
+
 private fun FavoriRecipes.toRecipeResult(): Result {
     return Result(
         id = this.recipeid,

@@ -40,8 +40,8 @@ class RecipeRepositoryImpl @Inject constructor(
 
     //local data recipes
 
-    override suspend fun getFavoriteRecipes(userId: String): Flow<List<FavoriRecipes>> {
-       return localDataSource.getFavoriteRecipes(userId)
+    override suspend fun getFavoriteRecipes(): Flow<List<FavoriRecipes>> {
+       return localDataSource.getFavoriteRecipes()
     }
 
     override suspend fun insertFavoriteRecipes(favoriRecipes: FavoriRecipes) {

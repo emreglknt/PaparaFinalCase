@@ -33,18 +33,13 @@ class RecipeDetailViewModel @Inject constructor(
     val selectRecipe: StateFlow<RecipeDetailState> = _selectRecipe
 
 
-    init {
-        viewModelScope.launch(Dispatchers.IO) {
-            getRecipeDetail()
-        }
-    }
 
 
-     fun getRecipeDetail() {
+
+     fun getRecipeDetail(id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            val recipeId = savedStateHandle.get<Int>("recipeId")
-            if (recipeId != null) {
-                repo.getRecipeDetails(recipeId).collect { apiResult ->
+
+                repo.getRecipeDetails(id).collect { apiResult ->
                     when (apiResult) {
                         is ApiResult.Success -> {
                             _selectRecipe.value = RecipeDetailState.Success(apiResult.data!!)
@@ -54,8 +49,8 @@ class RecipeDetailViewModel @Inject constructor(
                         }
                         ApiResult.Loading -> {
                             _selectRecipe.value = RecipeDetailState.Loading
-                        }
-                    }
+
+                     }
                 }
             }
         }

@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberImagePainter
@@ -52,11 +53,7 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
         contentScale = ContentScale.FillBounds
     )
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = "Meals") }
-            )
-        }
+
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -64,21 +61,19 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
                 .fillMaxSize()
         ) {
             Spacer(modifier = Modifier.height(16.dp))
-            IconButton(
-                onClick = { navController.navigate("daily_meal_screen") },
-                modifier = Modifier.padding(end = 16.dp) // Add padding if needed
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Favorite,
-                    contentDescription = "Favorite Recipes"
-                )
-            }
             SearchBar(searchText) {
                 searchText = it
                 homeViewModel.getRecipesByCategory(it)
             }
 
             Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "Categories",
+                style = MaterialTheme.typography.h6.copy(fontSize = 20.sp, fontWeight = FontWeight.Normal),
+                color = Color.Black,
+                modifier = Modifier
+                    .padding(horizontal = 13.dp)
+            )
 
             LazyRow(
                 modifier = Modifier
@@ -146,7 +141,6 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
         }
     }
 }
-
 @Composable
 fun SearchBar(searchText: String, onTextChange: (String) -> Unit) {
     Box(
@@ -157,34 +151,43 @@ fun SearchBar(searchText: String, onTextChange: (String) -> Unit) {
             .padding(horizontal = 8.dp),
         contentAlignment = Alignment.CenterStart
     ) {
-        BasicTextField(
-            value = searchText,
-            onValueChange = onTextChange,
-            textStyle = TextStyle(color = Color.Black),
-            singleLine = true,
-            cursorBrush = SolidColor(Color.Black),
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp)
-                .background(Color.Transparent, shape = RoundedCornerShape(16.dp))
-                .padding(vertical = 12.dp)
+                .padding(horizontal = 8.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            if (searchText.isEmpty()) {
-                Text(
-                    text = "Search recipes",
-                    style = TextStyle(color = Color.Gray)
-                )
+            BasicTextField(
+                value = searchText,
+                onValueChange = onTextChange,
+                textStyle = TextStyle(color = Color.Black),
+                singleLine = true,
+                cursorBrush = SolidColor(Color.Black),
+                modifier = Modifier
+                    .weight(1f)
+                    .background(Color.Transparent, shape = RoundedCornerShape(16.dp))
+            ) {
+                if (searchText.isEmpty()) {
+                    Text(
+                        text = "Search recipes",
+                        style = TextStyle(color = Color.Gray)
+                    )
+                }
+                it()
             }
-            it()
+            Spacer(modifier = Modifier.width(8.dp))
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = null,
+                tint = Color.Gray,
+                modifier = Modifier
+                    .size(24.dp)
+                    .padding(end = 8.dp)
+            )
         }
-        Icon(
-            imageVector = Icons.Default.Search,
-            contentDescription = null,
-            tint = Color.Gray,
-            modifier = Modifier.padding(end = 5.dp)
-        )
     }
 }
+
 
 @Composable
 fun CategoryCard(category: String, onClick: () -> Unit) {

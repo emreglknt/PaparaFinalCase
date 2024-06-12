@@ -16,7 +16,7 @@ interface RecipeRepository {
     suspend fun getRecipesByCategory(query: String): Flow<ApiResult<RecipeResponse>>
     suspend fun dailyMealPlan(): Flow<ApiResult<DailyMealPLanResponse>>
     // Local fav recipes
-    suspend fun getFavoriteRecipes(userId: String): Flow<List<FavoriRecipes>>
+    suspend fun getFavoriteRecipes(): Flow<List<FavoriRecipes>>
     suspend fun insertFavoriteRecipes(favoriRecipes: FavoriRecipes)
     suspend fun deleteFavoriteRecipeById(recipeId: String)
 

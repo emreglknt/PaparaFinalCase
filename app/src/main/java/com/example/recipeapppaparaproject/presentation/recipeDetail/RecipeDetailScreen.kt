@@ -44,13 +44,13 @@ import com.example.recipeapppaparaproject.R
 import com.example.recipeapppaparaproject.data.model.RecipeDetailResponse.ExtendedIngredient
 import com.example.recipeapppaparaproject.data.model.RecipeDetailResponse.RecipeDetailResponse
 import com.example.recipeapppaparaproject.presentation.favoriteRecipes.FavoriteRecipesViewModel
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.auth
-
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 @Composable
 fun RecipeDetailScreen(
+    recipeId: Int,
     recDetailViewModel: RecipeDetailViewModel = hiltViewModel(),
     onBackMealsScreen: () -> Unit,
     favoriteRecipeViewModel: FavoriteRecipesViewModel = hiltViewModel(),
@@ -64,8 +64,12 @@ fun RecipeDetailScreen(
     LaunchedEffect(favoriteRecipes) {
         if (recipeDetailState is RecipeDetailState.Success) {
             val recipeDetails = (recipeDetailState as RecipeDetailState.Success).meals
-            isFavorite = favoriteRecipes.any { it.recipeid == recipeDetails.id && it.userId == currentUser?.uid }
+            isFavorite = favoriteRecipes.any { it.recipeid == recipeDetails.id }
         }
+    }
+
+    LaunchedEffect(Unit) {
+        recDetailViewModel.getRecipeDetail(recipeId)
     }
 
     Scaffold(
@@ -110,9 +114,7 @@ fun RecipeDetailScreen(
             }
         }
     }
-}
-
-@Composable
+}@Composable
 fun RecipeDetailCompose(
     recipeDetails: RecipeDetailResponse,
     onBackMealsScreen: () -> Unit,
@@ -120,142 +122,158 @@ fun RecipeDetailCompose(
     isFavorite: Boolean,
     favoriteRecipeViewModel: FavoriteRecipesViewModel
 ) {
-
-
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         recipeDetails.let {
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+            LazyColumn(
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxSize()
             ) {
-                Box {
-                    Image(
-                        painter = rememberImagePainter(data = recipeDetails.image),
-                        contentDescription = it.title,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(300.dp)
-                            .clip(RectangleShape)
-                    )
+                item {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(300.dp)
-                            .background(
-                                brush = Brush.verticalGradient(
-                                    colors = listOf(
-                                        Color.Transparent,
-                                        Color.Black.copy(alpha = 0.7f)
-                                    ),
-                                    startY = 100f
+                    ) {
+                        Image(
+                            painter = rememberImagePainter(data = recipeDetails.image),
+                            contentDescription = it.title,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(
+                                    brush = Brush.verticalGradient(
+                                        colors = listOf(
+                                            Color.Transparent,
+                                            Color.Black.copy(alpha = 0.7f)
+                                        ),
+                                        startY = 100f
+                                    )
                                 )
-                            )
-                    )
+                        )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                                .align(Alignment.TopStart),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.Top
+                        ) {
+                            IconButton(
+                                onClick = { onBackMealsScreen() },
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .background(
+                                        color = Color.Black.copy(alpha = 0.6f),
+                                        shape = CircleShape
+                                    )
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.ArrowBack,
+                                    contentDescription = "Back",
+                                    tint = Color.White
+                                )
+                            }
+                            IconButton( // Favorite
+                                onClick = { currentUser?.let { user ->
+                                    if (isFavorite) {
+                                        favoriteRecipeViewModel.removeFavoriteRecipe(it.id.toString())
+                                    } else {
+                                        favoriteRecipeViewModel.addFavoriteRecipe(it)
+                                    }
+                                }},
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .background(
+                                        color = Color.Black.copy(alpha = 0.6f),
+                                        shape = CircleShape
+                                    )
+                            ) {
+                                Icon(
+                                    imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                    contentDescription = "Favorite",
+                                    tint = if (isFavorite) Color.Red else Color.White
+                                )
+                            }
+                        }
+                        Text(
+                            text = it.title ?: "No Title",
+                            textAlign = TextAlign.Center,
+                            color = Color.White,
+                            style = MaterialTheme.typography.h4,
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(10.dp)
+                        )
+                    }
+                }
+
+                item {
                     Row(
+                        horizontalArrangement = Arrangement.SpaceEvenly,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp)
-                            .align(Alignment.TopStart),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.Top
+                            .padding(top = 16.dp)
                     ) {
-                        IconButton(
-                            onClick = { onBackMealsScreen() },
-                            modifier = Modifier
-                                .size(40.dp)
-                                .background(
-                                    color = Color.Black.copy(alpha = 0.6f),
-                                    shape = CircleShape
-                                )
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowBack,
-                                contentDescription = "Back",
-                                tint = Color.White
-                            )
-                        }
-                        IconButton( // Favorite
-
-                            onClick = { currentUser?.let { user ->
-                                if (isFavorite) {
-                                    favoriteRecipeViewModel.removeFavoriteRecipe(it.id.toString(), user.uid)
-                                }
-                                else {
-                                    favoriteRecipeViewModel.addFavoriteRecipe(it, user.uid)
-                                }
-
-                                 }},
-                            modifier = Modifier
-                                .size(40.dp)
-                                .background(
-                                    color = Color.Black.copy(alpha = 0.6f),
-                                    shape = CircleShape
-                                )
-                        ) {
-                            Icon(
-                                imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                contentDescription = "Favorite",
-                                tint = if (isFavorite) Color.Red else Color.White
-                            )
-                        }
+                        InfoColumn(R.drawable.clock_vector, it.cookingMinutes?.toString() ?: "N/A")
+                        InfoColumn(R.drawable.service_vector, it.servings?.toString() ?: "N/A")
+                        InfoColumn(R.drawable.star, it.aggregateLikes?.toString() ?: "N/A")
                     }
+                }
+
+                item {
                     Text(
-                        text = it.title,
+                        text = "Ingredients",
                         textAlign = TextAlign.Center,
-                        color = Color.White,
-                        style = MaterialTheme.typography.h4,
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .padding(10.dp)
+                        modifier = Modifier.padding(15.dp),
+                        color = Color.Black
                     )
-
-
-
-
-
                 }
 
-
-
-                Row(
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp)
-                ) {
-                    InfoColumn(R.drawable.clock_vector, it?.cookingMinutes.toString())
-                    InfoColumn(R.drawable.service_vector, it?.servings.toString())
-                    InfoColumn(R.drawable.star, it?.aggregateLikes.toString())
-                }
-
-
-                // Ingredients text
-                Text(
-                    text = "Ingredients",
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(15.dp),
-                    color = Color.Black
-                )
-
-                // Ingredients list lazycolumn
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(recipeDetails.extendedIngredients.size) { index ->
-                        val ingredient = recipeDetails.extendedIngredients[index]
-                        IngredientsCard(ingredient)
-
+                item {
+                    LazyRow(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(recipeDetails.extendedIngredients.size) { index ->
+                            val ingredient = recipeDetails.extendedIngredients[index]
+                            IngredientsCard(ingredient)
+                        }
                     }
                 }
 
+                item {
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
 
+                item {
+                    Text(
+                        text = "Instructions",
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                    )
+                    Spacer(modifier = Modifier.height(5.dp))
+                }
+
+                item {
+                    Text(
+                        text = recipeDetails.summary ?: "No Summary",
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        color = Color.Black
+                    )
+                }
             }
         }
-
     }
 }
 
@@ -268,7 +286,7 @@ fun InfoColumn(@DrawableRes iconResouce: Int, text: String) {
             tint = Color.Black,
             modifier = Modifier.height(24.dp)
         )
-        Text(text = text, fontWeight = Bold)
+        Text(text = text, fontWeight = FontWeight.Bold)
     }
 }
 
@@ -297,14 +315,14 @@ fun IngredientsCard(ingredient: ExtendedIngredient) {
             Spacer(modifier = Modifier.width(8.dp))
             Column {
                 Text(
-                    text = ingredient.name,
+                    text = ingredient.name ?: "Unknown Ingredient",
                     style = MaterialTheme.typography.h6.copy(
                         fontSize = 15.sp
                     )
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "${ingredient.amount} / ${ingredient.unit}",
+                    text = "${ingredient.amount} / ${ingredient.unit ?: "unit"}",
                     style = MaterialTheme.typography.body2.copy(
                         fontSize = 10.sp,
                     )
