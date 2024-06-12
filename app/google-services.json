@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "134029989380",
+    "project_id": "recipeapppapara",
+    "storage_bucket": "recipeapppapara.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:134029989380:android:3564f6156055bbc68e0751",
+        "android_client_info": {
+          "package_name": "com.example.recipeapppaparaproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-Dme2ISM9A1XpoHsIPeS7GNoziflI0x4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
