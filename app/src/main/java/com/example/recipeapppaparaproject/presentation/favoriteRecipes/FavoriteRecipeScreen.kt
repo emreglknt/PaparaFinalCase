@@ -4,16 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,14 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.rememberDismissState
-import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -51,9 +35,7 @@ import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.recipeapppaparaproject.R
 import com.example.recipeapppaparaproject.data.local.entity.FavoriRecipes
-import com.example.recipeapppaparaproject.nav.Screens
 import com.example.recipeapppaparaproject.presentation.bottomBar.BottomBarScreen
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -62,14 +44,12 @@ fun FavoriteRecipeScreen(
     navController: NavController,
     favViewModel: FavoriteRecipesViewModel = hiltViewModel(),
 ) {
-
     val favoriteRecipes by favViewModel.favoriteRecipes.observeAsState(emptyList())
     LaunchedEffect(Unit) {
         favViewModel.getFavoriteRecipes()
     }
 
     Scaffold(
-
         topBar = {
             TopAppBar(
                 title = { Text(text = "Favorite Recipes") },
@@ -80,7 +60,6 @@ fun FavoriteRecipeScreen(
                 }
             )
         }
-
     ) {
         Box(
             modifier = Modifier.fillMaxSize()
@@ -96,7 +75,7 @@ fun FavoriteRecipeScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 25.dp) // TopAppBar ile arasında boşluk bırak
+                    .padding(top = 25.dp)
             ) {
                 if (favoriteRecipes.isEmpty()) {
                     Box(
@@ -109,7 +88,7 @@ fun FavoriteRecipeScreen(
                     LazyColumn(
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        items(favoriteRecipes) { recipe ->
+                        items(favoriteRecipes, key = { it.recipeid }) { recipe ->
                             RecipeItem(
                                 recipe = recipe,
                                 onRecipeClick = {
@@ -118,9 +97,7 @@ fun FavoriteRecipeScreen(
                                     }
                                 },
                                 onRecipeDismissed = {
-                                    favViewModel.removeFavoriteRecipe(
-                                        it.recipeid.toString(),
-                                    )
+                                    favViewModel.removeFavoriteRecipe(recipe.recipeid.toString())
                                 }
                             )
                         }
@@ -154,6 +131,19 @@ fun RecipeItem(
         directions = setOf(DismissDirection.StartToEnd, DismissDirection.EndToStart),
         dismissThresholds = { direction -> FractionalThreshold(0.25f) },
         background = {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(8.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete",
+                    tint = Color.White,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
         },
         dismissContent = {
             Card(
@@ -188,5 +178,3 @@ fun RecipeItem(
         }
     )
 }
-
-
