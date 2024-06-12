@@ -44,6 +44,8 @@ The application follows the MVVM (Model-View-ViewModel) architecture to ensure a
 2. **Open in Android Studio:**
 Open the cloned repository in Android Studio.
 
+
+
 Build and Run:
 Build and run the project on an emulator or a physical device.
 
