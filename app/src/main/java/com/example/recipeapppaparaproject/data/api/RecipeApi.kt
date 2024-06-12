@@ -1,9 +1,10 @@
 package com.example.recipeapppaparaproject.data.api
 
+import com.example.recipeapppaparaproject.BuildConfig
+import com.example.recipeapppaparaproject.BuildConfig.API_KEY
 import com.example.recipeapppaparaproject.data.model.DailyMealResponse.DailyMealPLanResponse
 import com.example.recipeapppaparaproject.data.model.RecipeDetailResponse.RecipeDetailResponse
 import com.example.recipeapppaparaproject.data.model.RecipeResponse.RecipeResponse
-import com.example.recipeapppaparaproject.utils.Constants.API_KEY
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
