@@ -44,7 +44,9 @@ The application follows the MVVM (Model-View-ViewModel) architecture to ensure a
 2. **Open in Android Studio:**
 Open the cloned repository in Android Studio.
 
-
+3. Add your Spoonacular API key to the local.properties file: API_KEY=YOUR_API_KEY
+4. Add buildConfig = true in buildFeatures on build.gradle.kts(Module:app)
+5. Run the app using the 'app' command.
 
 Build and Run:
 Build and run the project on an emulator or a physical device.
