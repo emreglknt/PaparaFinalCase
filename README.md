@@ -7,7 +7,7 @@ RecipeAppPaparaProject is a comprehensive mobile application designed to help us
 ## Purpose
 
 The primary purpose of this application is to provide a user-friendly platform for food enthusiasts to explore new recipes, organize their favorite dishes, and plan their meals efficiently. Users can search for recipes based on categories, view detailed instructions and ingredients, and keep track of their favorite recipes.
-
+ 
 ## Features
 
 - **User Authentication:** Users can register and log in to the app to access personalized features.
